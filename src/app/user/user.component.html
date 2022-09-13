@@ -1,0 +1,43 @@
+ <div class="col-sm-12">
+    
+    <table class="table" style="margin:50px;">
+        <thead>
+            <tr>
+                <th class="table-title text-center">
+                    No.
+                </th>
+                <th class="table-title act-width text-center">
+                    User Name
+                </th>
+                <th class="table-title act-width text-center">
+                    PhoneNo
+                </th>
+                <th class="table-title act-width text-center">
+                    Email
+                </th>
+                <th class="table-title act-width text-center">
+                    Nrc
+                </th>
+                <th class="table-title act-width text-center">
+                  Action
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngIf="userList.length === 0">
+                <td colspan="4">No available</td>
+            </tr>
+            <tr *ngFor="let user of userList;let i=index">
+                <td class="text-center">{{ i+1 }}</td>
+                <td class="text-center">{{ user.name }}</td>
+                <td class="text-center">{{ user.phno }}</td>
+                <td class="text-center">{{ user.email }}</td>
+                <td class="text-center">{{ user.nrc }}</td>
+                <td>
+                  <button class="btn btn-info btn" (click)="deleteUser(user)">Delete</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+</div>
