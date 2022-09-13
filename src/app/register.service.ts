@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import {BehaviorSubject, } from "rxjs";
+import { BehaviorSubject, Observable, } from "rxjs";
 import { User } from './user';
 
 @Injectable({
@@ -10,15 +10,16 @@ export class RegisterService {
 
   userList: User[] = [];
   constructor() { }
-  private userSubject$ = new BehaviorSubject<User[]>([]);
-  users$ = this.userSubject$.asObservable();
+  private userSubject$ = new BehaviorSubject<User[]>(this.userList);
 
-  getUser() {
-    return this.userSubject$.asObservable();
+  setUser(user: User): void {
+    this.userList.push(user);
+    this.userSubject$.next(this.userList);
   }
 
-  setUser(userList: User[]) {
-   this.userSubject$.next(userList);
+  getUser(): Observable<User[]> {
+    return this.userSubject$;
   }
+
 
 }

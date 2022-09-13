@@ -1,9 +1,8 @@
-
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder,FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { initUser, User } from '../user';
-import { cloneDeep, findIndex, keys } from "lodash";
-import { Route, Router } from '@angular/router';
+import { cloneDeep, findIndex } from "lodash";
+import { Router } from '@angular/router';
 import { RegisterService } from '../register.service';
 
 @Component({
@@ -13,23 +12,23 @@ import { RegisterService } from '../register.service';
 })
 export class RegisterComponent implements OnInit {
 
-  userForm!: FormGroup ;
+  userForm!: FormGroup;
   currentUsers: User[] = [];
   formSubmitted: boolean = false;
-  data:any;
   user: User = cloneDeep(initUser);
-  
+
   constructor(private fb: FormBuilder, private router: Router, private service: RegisterService) { }
 
   ngOnInit(): void {
-    console.log('Current User: ',this.currentUsers)
-    this.userForm= this.fb.group({
+    this.service.getUser().subscribe(data => this.currentUsers = data);
+    console.log('Registered User: ', this.currentUsers);
 
-      name: ['', [Validators.required,Validators.pattern("[A-Z].*$"),this.duplicateTeamNameValidator()]],
-      phno:['', [Validators.required,Validators.pattern("[0-9]+$"),Validators.minLength(7),Validators.maxLength(10)]],
-      email: ['',[Validators.required,Validators.pattern("[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$")]],
-      nrc:['', [Validators.required]]
-      
+    this.userForm = this.fb.group({
+      name: ['', [Validators.required, Validators.pattern("[A-Z].*$"), this.duplicateTeamNameValidator()]],
+      phno: ['', [Validators.required, Validators.pattern("[0-9]+$"), Validators.minLength(7), Validators.maxLength(10)]],
+      email: ['', [Validators.required, Validators.pattern("[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$")]],
+      nrc: ['', [Validators.required]]
+
     })
 
   }
@@ -49,27 +48,16 @@ export class RegisterComponent implements OnInit {
     })
   }
 
-
-  register(){
+  register() {
     this.formSubmitted = true;
-    
-      console.log('User list before',this.currentUsers);
-      this.markFormTouched(this.userForm);
-      if (this.userForm.invalid) return;
-      
-        if(this.data !== null)
-        //if(this.currentUsers !== null)
+    this.markFormTouched(this.userForm);
 
-      localStorage.setItem('userList', JSON.stringify(this.currentUsers));
-      this.currentUsers.push({ ...this.user, id: String(this.currentUsers.length + 1) })
-      console.log('Data: ',this.currentUsers)
-      this.data = JSON.parse(localStorage.getItem('userList')|| '');
- 
-      this.user = cloneDeep(initUser);
-      this.markFormUntouched(this.userForm);
-      this.router.navigate(['/user']);
-      this.service.setUser(this.currentUsers);
-      
+    if (this.userForm.invalid) return;
+
+    this.service.setUser(this.user);
+    //this.user = cloneDeep(initUser);
+    this.markFormUntouched(this.userForm);
+    this.router.navigate(['/user']);
   }
 
   duplicateTeamNameValidator(): ValidatorFn {
@@ -81,13 +69,4 @@ export class RegisterComponent implements OnInit {
       } else return null;
     }
   }
-
- 
-
 }
-
-
- 
-  
-
-
